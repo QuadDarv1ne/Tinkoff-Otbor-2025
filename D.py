@@ -11,31 +11,59 @@ def max_special_number(digits_count):
                          доступных цифр от 0 до 9.
 
     Возвращает:
-    str: Наибольшее "особое" число, составленное из доступных цифр.
-
-    Пример:
-    >>> max_special_number([2, 3, 0, 0, 0, 0, 0, 0, 0, 0])
-    '10101'
+    str: Наибольшее "особое" число, составленное из доступных цифр. Если составить число невозможно,
+         возвращает пустую строку.
     """
+    total = sum(digits_count)
+    if total == 0:
+        return ""
+    count = digits_count[:]
     result = []
-    last_digit = None
+    last = None
 
-    while True:
-        added = False
-        for digit in range(9, -1, -1):
-            if digits_count[digit] > 0 and digit != last_digit:
-                result.append(str(digit))
-                digits_count[digit] -= 1
-                last_digit = digit
-                added = True
+    while total > 0:
+        found = False
+        for d in range(9, -1, -1):
+            if count[d] == 0:
+                continue
+            if d == last:
+                continue
+            count[d] -= 1
+            if total == 1:
+                result.append(str(d))
+                total -= 1
+                last = d
+                found = True
                 break
 
-        if not added:
+            max_cnt = max(count)
+            if max_cnt <= total // 2:
+                result.append(str(d))
+                total -= 1
+                last = d
+                found = True
+                break
+            else:
+                count[d] += 1
+
+        if not found:
             break
 
-    return ''.join(result)
+    if total > 0:
+        return ""
+    else:
+        return ''.join(result)
 
-# Пример использования
-input_data = input().strip()
-digits_count = list(map(int, input_data.split()))
-print(max_special_number(digits_count))
+def main():
+    """
+    Основная функция программы.
+
+    Считывает входные данные, представляющие количество доступных цифр от 0 до 9,
+    и выводит наибольшее "особое" число, которое можно составить из этих цифр.
+    """
+    data = input("Введите количество цифр от 0 до 9 через пробел: ").split()
+    digits_count = list(map(int, data))
+    print(max_special_number(digits_count))
+
+if __name__ == "__main__":
+    main()
